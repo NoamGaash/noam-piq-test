@@ -1,1 +1,3 @@
-compare /home/noam/Documents/4-4 dataset/output/casia-no-bg/all_subjects/results/WS30/CASIA/Dataset_IUV_from_appearance_0000/0000/00/ vs /home/noam/Documents/4-4 dataset/output/casia-no-bg/all_subjects/Crop256/rgb/0000/00/lpips: 0.122
+compare /home/noam/Documents/4-4 dataset/output/casia-no-bg/all_subjects/results/WS30/CASIA/Dataset_IUV_from_appearance_0000/0000/00/001/ vs /home/noam/Documents/4-4 dataset/output/casia-no-bg/all_subjects/Crop256/rgb/0000/00/001/ 
+lpips: 0.107 
+ssim: 0.174 

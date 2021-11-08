@@ -2,6 +2,7 @@ import argparse
 import os
 import pathlib
 import lpips
+from piq import SSIMLoss
 
 parser = argparse.ArgumentParser(formatter_class=argparse.ArgumentDefaultsHelpFormatter)
 parser.add_argument('-d0','--dir0', type=str, default='./imgs/ex_dir0')
@@ -34,6 +35,9 @@ def getMetric(loss_fn):
 			img0 = lpips.im2tensor(lpips.load_image(os.path.join(opt.dir0,file))) # RGB image from [-1,1]
 			img1 = lpips.im2tensor(lpips.load_image(os.path.join(opt.dir1,file)))
 
+			img0 = img0 * .5 + .5
+			img1 = img1 * .5 + .5
+
 			if(opt.use_gpu):
 				img0 = img0.cuda()
 				img1 = img1.cuda()
@@ -45,11 +49,18 @@ def getMetric(loss_fn):
 
 	return sum/count
 
-lpips_loss = getMetric(loss_fn.forward)
 
 print('compare %s vs %s'%(opt.dir0, opt.dir1))
-f.writelines('compare %s vs %s'%(opt.dir0, opt.dir1))
+f.writelines('compare %s vs %s \n'%(opt.dir0, opt.dir1))
+
+
+lpips_loss = getMetric(loss_fn.forward)
 print('lpips: %.3f'%(lpips_loss))
-f.writelines('lpips: %.3f'%(lpips_loss))
+f.writelines('lpips: %.3f \n'%(lpips_loss))
+
+
+ssim_loss = getMetric(SSIMLoss(data_range=1.))
+print('ssim: %.3f'%(ssim_loss))
+f.writelines('ssim: %.3f \n'%(ssim_loss))
 
 f.close()
