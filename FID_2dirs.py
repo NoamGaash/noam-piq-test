@@ -67,3 +67,9 @@ if __name__ == '__main__':
     feat_2 = fid_metric.compute_feats(loader_2)
     fid = fid_metric.compute_metric(feat_1, feat_2)
     print(f'====> fid: {fid}')
+
+    is_metric = piq.IS()
+    feat_1 = is_metric.compute_feats(loader_1)
+    feat_2 = is_metric.compute_feats(loader_2)
+    IS = is_metric.compute_metric(feat_1, feat_2)
+    print(f'====> IS: {IS}')
