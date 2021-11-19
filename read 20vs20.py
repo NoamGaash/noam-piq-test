@@ -1,46 +1,48 @@
 from glob import glob
 import pandas as pd
 
-folder = 'results/iuv/'
+folder = 'results/sticks/'
 
-files = glob(folder + '*')
+files = glob(folder + '*out_pose*.txt')
 
-lpips_array = []
-ssim_array = []
+metrics_array = []
 
 for filename in files:
-    file = open(filename, "r").read()
-    file = file.split("\n")
-    try:
-        lpips = float(file[1].split(' ')[1])
-        ssim = float(file[2].split(' ')[1])
-        pose = filename.split("_")[2]
-        appearence = filename.split("_")[-1][:4]
-        print(filename, lpips, ssim, int(pose), int(appearence))
-        
-        lpips_array.append({
-            'pose': pose,
-            'appearence': appearence,
-            'lpips': lpips
-        })
-        ssim_array.append({
-            'pose': pose,
-            'appearence': appearence,
-            'ssim': ssim
-        })
 
+    file = open(filename, "r").read()
+    file += open(filename.replace("out_pose", "out_IS_FID_pose"), "r").read()
+    file = file.split()
+    pose = filename.split("_")[-3]
+    appearence = filename.split("_")[-1][:4]
+
+    try: # try get lpips and ssim
+        lpips_ind = file.index('lpips:') + 1
+        lpips = float(file[lpips_ind])
+
+        ssim_ind = file.index('ssim:') + 1
+        ssim = float(file[ssim_ind])
+
+        fid_ind = file.index('fid:') + 1
+        fid = float(file[fid_ind])
+        IS_ind = file.index('IS:') + 1
+        IS = float(file[IS_ind])
+        
+        metrics_array.append({
+            'pose': pose,
+            'appearence': appearence,
+            'lpips': lpips,
+            'ssim': ssim,
+            'fid': fid,
+            'IS': IS
+        })
 
     except:
         print(filename, ' - error')
 
-lpips_df = pd.DataFrame(lpips_array)
-lpips_df.set_index(['pose', 'appearence'], inplace=True)
-lpips_df = lpips_df.unstack()
 
-ssim_df = pd.DataFrame(ssim_array)
-ssim_df.set_index(['pose', 'appearence'], inplace=True)
-ssim_df = ssim_df.unstack()
+metrics_df = pd.DataFrame(metrics_array)
+metrics_df.set_index(['pose', 'appearence'], inplace=True)
+metrics_df = metrics_df.unstack()
 
-print(ssim_df)
-pd.to_pickle(lpips_df, folder + 'lpips.pickle')
-pd.to_pickle(ssim_df, folder + 'ssim.pickle')
+print(metrics_df)
+pd.to_pickle(metrics_df, folder + 'metrics.pickle')

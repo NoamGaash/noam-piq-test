@@ -24,7 +24,7 @@ opt = parser.parse_args()
 
 
 def getFilePaths(path):
-    result = (list(pathlib.Path(path).glob("**/*")))
+    result = (list(pathlib.Path(path).glob("**/*.png")))
     return result
 
 
@@ -62,14 +62,16 @@ if __name__ == '__main__':
     loader_1 = torch.utils.data.DataLoader(set_1, batch_size=1, shuffle=False)
     loader_2 = torch.utils.data.DataLoader(set_2, batch_size=1, shuffle=False)
     
+    print(f'compare {opt.dir0} vs {opt.dir1}')
+
     fid_metric = piq.FID()
     feat_1 = fid_metric.compute_feats(loader_1)
     feat_2 = fid_metric.compute_feats(loader_2)
     fid = fid_metric.compute_metric(feat_1, feat_2)
-    print(f'====> fid: {fid}')
+    print(f'fid: {fid}')
 
     is_metric = piq.IS()
     feat_1 = is_metric.compute_feats(loader_1)
     feat_2 = is_metric.compute_feats(loader_2)
     IS = is_metric.compute_metric(feat_1, feat_2)
-    print(f'====> IS: {IS}')
+    print(f'IS: {IS}')
